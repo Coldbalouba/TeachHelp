@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeachHelp - AI Lesson Generator</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="assets/icon.png" alt="TeachHelp" class="app-icon">
+            <h1>TeachHelp</h1>
+            <p class="subtitle">AI-Powered Lesson Plan Generator</p>
+        </header>
+        
+        <main>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="apiKey">Gemini API Key:</label>
+                    <input 
+                        type="password" 
+                        id="apiKey" 
+                        placeholder="Enter your Gemini API key"
+                        autocomplete="off"
+                    >
+                    <small>Your API key is stored locally and never sent to our servers</small>
+                </div>
+                
+                <div class="input-group">
+                    <label for="modelSelect">Select Model:</label>
+                    <select id="modelSelect" class="model-select">
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (Free Tier - Recommended)</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (Free Tier)</option>
+                        <option value="gemini-2.0-flash-exp">Gemini 2 Flash Exp</option>
+                        <option value="gemini-2.0-pro-exp">Gemini 2 Pro Exp</option>
+                        <option value="gemini-2.0-flash">Gemini 2 Flash</option>
+                        <option value="gemini-2.0-flash-lite">Gemini 2 Flash Lite</option>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                    </select>
+                    <small>Choose the model based on your needs. Gemini 1.5 models work best on free tier. Pro models are more capable, Flash models are faster. Your selection is saved.</small>
+                </div>
+                
+                <div class="input-group">
+                    <label for="lessonPrompt">Lesson Description:</label>
+                    <textarea 
+                        id="lessonPrompt" 
+                        rows="6" 
+                        placeholder="Describe your lesson topic, learning objectives, grade level, or any specific requirements. For example: 'Create a lesson plan about photosynthesis for 5th grade students covering the process, importance, and key components.'"
+                    ></textarea>
+                </div>
+                
+                <button id="generateBtn" class="generate-btn">
+                    <span class="btn-text">Generate Lesson</span>
+                    <span class="btn-loader" style="display: none;">⏳ Generating...</span>
+                </button>
+            </div>
+            
+            <div id="statusMessage" class="status-message" style="display: none;"></div>
+        </main>
+        <footer class="credit">
+            Made with ❤️ by <strong>AJ (Ahmed Jouini)</strong>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
