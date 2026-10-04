@@ -29,18 +29,22 @@
                 </div>
                 
                 <div class="input-group">
-                    <label for="modelSelect">Select Model:</label>
-                    <select id="modelSelect" class="model-select">
-                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (Free Tier - Recommended)</option>
-                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (Free Tier)</option>
-                        <option value="gemini-2.0-flash-exp">Gemini 2 Flash Exp</option>
-                        <option value="gemini-2.0-pro-exp">Gemini 2 Pro Exp</option>
-                        <option value="gemini-2.0-flash">Gemini 2 Flash</option>
-                        <option value="gemini-2.0-flash-lite">Gemini 2 Flash Lite</option>
-                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-                    </select>
-                    <small>Choose the model based on your needs. Gemini 1.5 models work best on free tier. Pro models are more capable, Flash models are faster. Your selection is saved.</small>
+                    <label>Model Order:</label>
+                    <div class="model-order">
+                        <div class="model-order-row">
+                            <span class="model-rank">1st</span>
+                            <select id="modelSelect" class="model-select" data-rank="0"></select>
+                        </div>
+                        <div class="model-order-row">
+                            <span class="model-rank">2nd</span>
+                            <select id="modelSelect2" class="model-select" data-rank="1"></select>
+                        </div>
+                        <div class="model-order-row">
+                            <span class="model-rank">3rd</span>
+                            <select id="modelSelect3" class="model-select" data-rank="2"></select>
+                        </div>
+                    </div>
+                    <small>Choose which model is tried first, second and third. If one is unavailable or out of quota, the next one is used. Your order is saved.</small>
                 </div>
                 
                 <div class="input-group">

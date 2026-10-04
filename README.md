@@ -15,7 +15,7 @@
 - **Professional Slideshow** — Exactly 5 slides with an engaging opener, designed for classroom projection
 - **Interactive Flashcards** — Key terms and concepts for review
 - **Final Quiz** — Multiple-choice assessment to check student mastery
-- **Model Selection** — Choose from multiple Gemini models (1.5 Flash, 1.5 Pro, 2.0/2.5 variants)
+- **Model Order** — Choose which Gemini model is tried 1st, 2nd and 3rd (1.5 Flash, 1.5 Pro, 2.0/2.5 variants); if one fails, the next is used
 - **Local Storage** — API key and model preference saved in your browser for convenience
 - **Single HTML Output** — Generated lesson opens in a new tab as a standalone HTML page with navigation
 
@@ -24,7 +24,7 @@
 ## How It Works
 
 1. Enter your **Gemini API key** (get one free at [Google AI Studio](https://makersuite.google.com/app/apikey))
-2. Select your preferred **Gemini model** (Gemini 1.5 Flash recommended for free tier)
+2. Pick your **1st, 2nd and 3rd choice Gemini models** (Gemini 1.5 Flash recommended first for free tier)
 3. Describe your lesson (e.g., *"Photosynthesis for 5th grade, covering the process and key components"*)
 4. Click **Generate Lesson**
 5. The app creates a full HTML lesson site with:

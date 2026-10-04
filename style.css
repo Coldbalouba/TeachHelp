@@ -181,3 +181,25 @@ header h1 {
 .credit strong {
     color: #667eea;
 }
+
+.model-order {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.model-order-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.model-rank {
+    flex: 0 0 40px;
+    font-weight: 600;
+    color: #555;
+}
+
+.model-order-row .model-select {
+    flex: 1;
+}
