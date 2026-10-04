@@ -1,23 +1,66 @@
-// Store API key and model in localStorage
+// Available models, in the order they appear in the dropdowns
+const MODELS = [
+    { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (Free Tier - Recommended)' },
+    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Free Tier)' },
+    { value: 'gemini-2.0-flash-exp', label: 'Gemini 2 Flash Exp' },
+    { value: 'gemini-2.0-pro-exp', label: 'Gemini 2 Pro Exp' },
+    { value: 'gemini-2.0-flash', label: 'Gemini 2 Flash' },
+    { value: 'gemini-2.0-flash-lite', label: 'Gemini 2 Flash Lite' },
+    { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+    { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' }
+];
+const DEFAULT_MODEL_ORDER = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash'];
+
+// Store API key and model order in localStorage
 let apiKey = localStorage.getItem('geminiApiKey') || '';
-let selectedModel = localStorage.getItem('geminiModel') || 'gemini-1.5-flash';
+let modelOrder = loadModelOrder();
+
+function loadModelOrder() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('geminiModelOrder'));
+        if (Array.isArray(saved) && saved.length === 3) return saved;
+    } catch (e) {}
+    // Carry over the single model picked in older versions as the 1st choice
+    const legacy = localStorage.getItem('geminiModel');
+    if (legacy) {
+        const others = DEFAULT_MODEL_ORDER.filter(m => m !== legacy);
+        return [legacy, others[0], others[1]];
+    }
+    return [...DEFAULT_MODEL_ORDER];
+}
+
+function getModelSelects() {
+    return [
+        document.getElementById('modelSelect'),
+        document.getElementById('modelSelect2'),
+        document.getElementById('modelSelect3')
+    ];
+}
 
 // Initialize UI
 document.addEventListener('DOMContentLoaded', () => {
     const apiKeyInput = document.getElementById('apiKey');
-    const modelSelect = document.getElementById('modelSelect');
+    const modelSelects = getModelSelects();
     const generateBtn = document.getElementById('generateBtn');
     const lessonPrompt = document.getElementById('lessonPrompt');
+    
+    // Fill the 1st/2nd/3rd dropdowns (2nd and 3rd can be left empty)
+    modelSelects.forEach((select, rank) => {
+        if (rank > 0) {
+            select.add(new Option('None', ''));
+        }
+        MODELS.forEach(m => select.add(new Option(m.label, m.value)));
+    });
     
     // Load saved API key
     if (apiKey) {
         apiKeyInput.value = apiKey;
     }
     
-    // Load saved model selection
-    if (selectedModel) {
-        modelSelect.value = selectedModel;
-    }
+    // Load saved model order
+    modelSelects.forEach((select, rank) => {
+        select.value = modelOrder[rank] || '';
+    });
     
     // Save API key when changed
     apiKeyInput.addEventListener('input', (e) => {
@@ -25,10 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('geminiApiKey', apiKey);
     });
     
-    // Save model selection when changed
-    modelSelect.addEventListener('change', (e) => {
-        selectedModel = e.target.value;
-        localStorage.setItem('geminiModel', selectedModel);
+    // Save model order when changed
+    modelSelects.forEach(select => {
+        select.addEventListener('change', () => {
+            modelOrder = modelSelects.map(s => s.value);
+            localStorage.setItem('geminiModelOrder', JSON.stringify(modelOrder));
+        });
     });
     
     // Generate lesson
@@ -42,13 +87,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function handleGenerate() {
     const apiKeyInput = document.getElementById('apiKey');
-    const modelSelect = document.getElementById('modelSelect');
+    const modelSelects = getModelSelects();
     const lessonPrompt = document.getElementById('lessonPrompt');
     const generateBtn = document.getElementById('generateBtn');
     const statusMessage = document.getElementById('statusMessage');
     
     const apiKey = apiKeyInput.value.trim();
-    const model = modelSelect.value;
+    // Models in the order chosen, skipping empty slots and repeats
+    const models = [...new Set(modelSelects.map(s => s.value).filter(Boolean))];
     const prompt = lessonPrompt.value.trim();
     
     // Validation
@@ -69,12 +115,12 @@ async function handleGenerate() {
     hideStatus();
     
     try {
-        const selectedModelName = modelSelect.options[modelSelect.selectedIndex].text;
-        showStatus(`Generating your lesson plan using ${selectedModelName}... This may take a minute.`, 'info');
-        console.log(`Attempting to generate lesson with model: ${model}`);
+        const firstModelName = modelSelects[0].options[modelSelects[0].selectedIndex].text;
+        showStatus(`Generating your lesson plan using ${firstModelName}... This may take a minute.`, 'info');
+        console.log(`Attempting to generate lesson with models in order: ${models.join(', ')}`);
         
         // Generate lesson content using Gemini
-        const lessonContent = await generateLessonContent(apiKey, prompt, model);
+        const lessonContent = await generateLessonContent(apiKey, prompt, models);
         
         // Create HTML site
         const htmlContent = generateLessonHTML(lessonContent);
@@ -104,11 +150,9 @@ async function handleGenerate() {
     }
 }
 
-async function generateLessonContent(apiKey, userPrompt, modelName) {
-    // Use the selected model, with fallback if it fails
-    // Prioritize free tier models that are more likely to work
-    const fallbackModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp', 'gemini-2.0-flash'];
-    const modelsToTry = [modelName, ...fallbackModels.filter(m => m !== modelName)];
+async function generateLessonContent(apiKey, userPrompt, modelOrder) {
+    // Try the models in the order the user chose (1st, 2nd, 3rd)
+    const modelsToTry = modelOrder;
     
     for (const model of modelsToTry) {
         try {
@@ -137,7 +181,7 @@ async function generateLessonContent(apiKey, userPrompt, modelName) {
         }
     }
     
-    throw new Error(`Model ${modelName} and fallback models are not accessible. Please check your API key and model selection.`);
+    throw new Error(`None of your chosen models (${modelsToTry.join(', ')}) are accessible. Please check your API key and model order.`);
 }
 
 async function tryGenerateWithModel(apiKey, userPrompt, modelName) {
